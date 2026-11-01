@@ -299,14 +299,8 @@ int main()
 	LeftBackChassisMotor.setStopping(vex::brakeType::hold);
 	RightFrontChassisMotor.setStopping(vex::brakeType::hold);
 	RightBackChassisMotor.setStopping(vex::brakeType::hold);
-	bot.gyro = Gyro;
 	armSolenoid.pumpOff();
-	bot.gyro.calibrate();
-	while(bot.gyro.isCalibrating())
-	{
-		printf("Gyro is calibrating\n");
-	}
-	armSolenoid.pumpOn();
+	
 	bot.gyro.resetHeading();
 	bot.gyro.resetRotation();
 	
@@ -317,13 +311,7 @@ int main()
 
 	while(true)
 	{
-		printf("Bot Index: %d\n", bot.index);
-
-
-		int gyroRotation = (int)bot.gyro.rotation(vex::rotationUnits::deg);
-		printf("Rotation: %d\n", gyroRotation);
-
-		Brain.Screen.printAt(1, 20, "Gyro: %d                                 ", gyroRotation);
+	    
 
 
 		trackVelocity((MotorData&)bot.left);
