@@ -95,7 +95,7 @@ bool initTrapezoidalProfileData(MotorData& data, short totalDuration, Trapezoida
 	data.profile.totalDuration = totalDuration;
 	data.profile.accDuration = accDuration;
 	data.profile.dccDuration = dccDuration;
-	data.profile.maxPower = MAX_POWER; // why not a define? 
+	data.profile.maxPower = 100; // why not a define? 
 	data.profile.previousPosition = prevPosition;
 	data.profile.isConfigured = true;
 	return true;

@@ -134,7 +134,7 @@ struct Bot
 	MotorData left;
 	MotorData right;
 	MotorData center;
-	vex::inertial Gyro;
+	vex::inertial gyro;
 	EndEff claw;
 	Light button;
 };

@@ -14,6 +14,7 @@ enum CommandType
 	MoveByDegreesRec = 0x82,
 	StopRecovery = 0x84,
 	Stop = 0x05,
+	SetPneumatic = 0x06,
 	WaitUntilPressed = 0x07,
 };
 

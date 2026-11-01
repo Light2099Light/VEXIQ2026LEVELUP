@@ -16,9 +16,9 @@ vex::motor rightArmMotor(PORT10, true);
 vex::motor leftArmMotor(PORT4, false);
 
 vex::motor RightFrontChassisMotor(PORT8, false);
-vex::motor RightBackChassisMotor(PORT1, true);
+vex::motor RightBackChassisMotor(PORT9, true);
 vex::motor LeftFrontChassisMotor(PORT2, true);
-vex::motor LeftBackChassisMotor(PORT7, false);
+vex::motor LeftBackChassisMotor(PORT3, false);
 
 // Pneumatics
 vex::pneumatic armSolenoid(PORT5);
@@ -58,8 +58,7 @@ void createCommands()
 
 	// for(int i = 0; i < 4; i++)
 	// {
-		initMoveByDegreeData(-distanceToDegrees(100), -distanceToDegrees(100), (TrapezoidalStates)Acc, (TrapezoidalStates)Acc);
-
+		
 			// initMoveByDegreeData(100,100,(TrapezoidalStates)Acc,(TrapezoidalStates)Acc, true);
 			// initMoveByDegreeData(-100,-100,(TrapezoidalStates)Acc,(TrapezoidalStates)Acc, true);
 			// initMoveByDegreeData(100,100,(TrapezoidalStates)Acc,(TrapezoidalStates)Acc, true);
@@ -283,7 +282,7 @@ int main()
 	bot.center.profile.previousPosition = 0;
 
 
-	bot.Gyro = Gyro;
+	bot.gyro = Gyro;
 
 	bot.button.initLed(touchLED);
 

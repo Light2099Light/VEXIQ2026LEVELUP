@@ -21,7 +21,7 @@ void changeState(TriangleState& state, TriangleState newState)
     state = newState;
 }
 
-void initTurnByGyroData( unsigned short angle, bool isRecovery = false)
+void initTurnByGyroData(short angle, bool isRecovery = false)
 {
 	VERIFY(sizeof(TurnByGyroData) <= sizeof(BaseCommand));
 
@@ -46,65 +46,26 @@ void configure(TurnByGyroData* data)
 	BaseCommand* command = (BaseCommand*)&bot.commands[bot.index];
 	memcpy(command, data, sizeof(TurnByGyroData));
 
-	bot.Gyro.setRotation(0, rotationUnits::deg);
+	bot.gyro.setRotation(0, rotationUnits::deg);
 }
 
 bool hasRan(TurnByGyroData* data)
 {
-    int gyroRotation = bot.Gyro.rotation();
+    int gyroRotation = bot.gyro.rotation();
     printf("Gyro rotation: %d, angle: %d\n", gyroRotation, data->angle);
-    // switch(data->gyroState)
-    // {
-    //     case AccT:
-    //     {
-    //         int power = MIN_POWER;
-
-    //         power = abs(power) * sgn(data->angle);
-
-    //         bot.left.motorPort.spin(-power);
-
-    //         bot.right.motorPort.spin(power);
-           
-    //         if(abs(bot.Gyro.rotation()) <= abs(data->angle)/2) return false;
-            
-    //         changeState(data->gyroState, DccT);
-           
-    //     }
-    //     break;
-
-    //     case DccT:
-    //     {
-           
-    //         int power;
-
-    //         int direction = sgn(data->angle);
-
-    //         power = abs(power) * direction;
-
-    //         bot.left.motorPort.spin(-power);
-
-    //         bot.right.motorPort.spin(power);
-    //         if(abs(bot.Gyro.rotation()) <= abs(data->angle)) return false;
-
-    //         return true;
-    //     }
-    //     break;
-    // }
-
+    
     int direction = sgn(data->angle);
 
-    if(abs(bot.Gyro.rotation()) < abs(data->angle/10))
+    if(abs(gyroRotation) < abs(data->angle))
     {
-        bot.left.motorPort.spin(direction * MIN_POWER+5);
-        bot.right.motorPort.spin(-direction * MIN_POWER+5);
-    }
-    else if(abs(bot.Gyro.rotation()) < abs(data->angle))
-    {
-        bot.left.motorPort.spin(direction * MIN_POWER);
-        bot.right.motorPort.spin(-direction * MIN_POWER);
+        int power = direction * abs(MIN_POWER);
+        bot.left.motorPort.spin(power);
+        bot.right.motorPort.spin(-power);
     }
     else
     {
+        bot.left.motorPort.stop();
+        bot.right.motorPort.stop();
         return true;
     }
 
