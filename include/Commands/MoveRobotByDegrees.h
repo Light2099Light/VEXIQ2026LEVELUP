@@ -1,5 +1,4 @@
-#define ACCELERATION_DURATION 100
-#define DECELERATION_DURATION 100
+
 #include "TrapezoidalProfile.h"
 struct RobotDrivetrainData
 {
@@ -7,11 +6,12 @@ struct RobotDrivetrainData
 	bool isConfigured;
 	TrapezoidalStates leftState;
 	TrapezoidalStates rightState;
+	unsigned short time;
 	short leftDuration;
 	short rightDuration;
 };
 const int commandSize = sizeof(RobotDrivetrainData);
-void initMoveByDegreeData(short leftDuration, short rightDuration, TrapezoidalStates leftState, TrapezoidalStates rightState, bool isRecovery = false)
+void initMoveByDegreeData(unsigned short time, short leftDuration, short rightDuration, TrapezoidalStates leftState, TrapezoidalStates rightState, bool isRecovery = false)
 {
 	VERIFY(commandSize <= sizeof(BaseCommand));
 
@@ -22,6 +22,8 @@ void initMoveByDegreeData(short leftDuration, short rightDuration, TrapezoidalSt
 	data.rightDuration = rightDuration;
 	data.leftState = leftState;
 	data.rightState = rightState;
+	data.time = time;
+	printf("InitLeftD: %d\n", data.leftDuration);
 
 	memcpy(&bot.commands[bot.index], &data, commandSize);
 
@@ -34,12 +36,13 @@ void configure(RobotDrivetrainData* data)
 
 	data->isConfigured = true;
 
-	initTrapezoidalProfileData((MotorData&)bot.left, data->leftDuration, data->leftState, ACCELERATION_DURATION, DECELERATION_DURATION, bot.left.motorPort.position());
-	initTrapezoidalProfileData((MotorData&)bot.right, data->rightDuration, data->rightState, ACCELERATION_DURATION, DECELERATION_DURATION, bot.right.motorPort.position());
+	initTrapezoidalProfileData((MotorData&)bot.left, data->leftDuration, data->leftState, bot.left.motorPort.position(), 3);
+	initTrapezoidalProfileData((MotorData&)bot.right, data->rightDuration, data->rightState, bot.right.motorPort.position(), 5);
 	motorDataChecksAndProcedures((MotorData&)bot.left);
 	motorDataChecksAndProcedures((MotorData&)bot.right);
 	resetCurrentPosition((MotorData&)bot.left, bot.left.motorPort.position());
 	resetCurrentPosition((MotorData&)bot.right, bot.right.motorPort.position());
+	CommTimer.clear();
 
 	BaseCommand* command = (BaseCommand*)&bot.commands[bot.index];
 	memcpy(command, data, sizeof(RobotDrivetrainData));
@@ -47,6 +50,10 @@ void configure(RobotDrivetrainData* data)
 
 bool hasRan(RobotDrivetrainData* data)
 {
+	if(CommTimer.time() >= data->time)
+	{
+		return true;
+	}
 	bool isLeftDone = TrapezoidalProfileMoveByDegrees((MotorData&)bot.left, bot.left.motorPort.position());
 	bool isRightDone = TrapezoidalProfileMoveByDegrees((MotorData&)bot.right, bot.right.motorPort.position());
 

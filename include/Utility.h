@@ -21,7 +21,9 @@ void finalize()
 
 int distanceToDegrees(int mm)
 {
-	return ((mm*180)/(M_PI*RADIUS_OF_WHEEL))/RATIO;
+	int dist = ((mm*180)/(M_PI*RADIUS_OF_WHEEL)) / RATIO;
+	printf("Distance to degrees: %d to %d \n", mm, dist);
+	return dist;
 }
 
 float degreesToMove(int angle)

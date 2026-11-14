@@ -16,6 +16,7 @@ enum CommandType
 	Stop = 0x05,
 	SetPneumatic = 0x06,
 	WaitUntilPressed = 0x07,
+	DriveUntilBeanBag = 0x08,
 };
 
 struct BaseCommand

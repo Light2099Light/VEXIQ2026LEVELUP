@@ -1,7 +1,7 @@
 #pragma once
-#define MIN_POWER 45
-#define ACCELERATION_DURATION 250
-#define DECELERATION_DURATION 250
+#define MIN_POWER 10
+#define ACCELERATION_DURATION 100
+#define DECELERATION_DURATION 500
 
 #include "Bot.h"
 
@@ -19,19 +19,22 @@ void resetCurrentPosition(MotorData& data, int currentPosition)
 }
 int getcurrentPosition(MotorData& data, int currentPosition)
 {
+	
 	return currentPosition - data.profile.previousPosition;
 }
 bool accelerate(MotorData& data, int sensorPosition)
 {
 	int currentPosition = getcurrentPosition(data, sensorPosition);
+	
 	if(abs(currentPosition) >= abs(data.profile.accDuration))
 	{
+		printf("Accelerate done\n currPos:%d\n", currentPosition);
 		return true;
 	}
 
 	float powerPercentage = (float)abs(currentPosition)/abs(ACCELERATION_DURATION);
 
-	int power = (powerPercentage*(data.profile.maxPower-MIN_POWER))+MIN_POWER;
+	int power = (powerPercentage*(data.profile.maxPower-data.profile.minPower))+data.profile.minPower;
 
 	power = abs(power) * sgn(data.profile.totalDuration);
 
@@ -45,9 +48,10 @@ bool accelerate(MotorData& data, int sensorPosition)
 bool stayAtSameSpeed(MotorData& data, int sensorPosition)
 {
 	int currentPosition = getcurrentPosition(data, sensorPosition);
-	int trapezoidalB1 = abs(data.profile.totalDuration)-DECELERATION_DURATION;
+	int trapezoidalB1 = abs(data.profile.totalDuration)-abs(data.profile.dccDuration);
 	if(abs(currentPosition) >= abs(trapezoidalB1))
 	{
+		printf("Coast done\n currPos:%d\n", currentPosition);
 		return true;
 	}
 
@@ -57,9 +61,11 @@ bool stayAtSameSpeed(MotorData& data, int sensorPosition)
 bool decelerate(MotorData& data, int sensorPosition)
 {
 	int currentPosition = getcurrentPosition(data, sensorPosition);
+	
 
 	if(abs(currentPosition) >= abs(data.profile.totalDuration))
 	{
+		printf("Decelerate done\n currPos:%d\n", currentPosition);
 		data.motorPort.stop();
 		return true;
 	}
@@ -68,9 +74,9 @@ bool decelerate(MotorData& data, int sensorPosition)
 
 	int adjustedPosition = (abs(data.profile.totalDuration) - data.profile.dccDuration) - abs(currentPosition);
 	int target = (abs(data.profile.totalDuration)-data.profile.dccDuration);
-	int percentageValue = data.profile.maxPower - MIN_POWER;
+	int percentageValue = data.profile.maxPower - data.profile.minPower;
 
-	int power = ((1-abs(adjustedPosition)/(float)DECELERATION_DURATION)*percentageValue)+MIN_POWER;
+	int power = ((1-(abs(adjustedPosition)/(float)DECELERATION_DURATION))*percentageValue)+data.profile.minPower;
 
 
 	power = abs(power) * sgn(data.profile.totalDuration);
@@ -89,13 +95,14 @@ Trap profile is very disorganized.
 pull this into it's own program.
 */
 
-bool initTrapezoidalProfileData(MotorData& data, short totalDuration, TrapezoidalStates state, short accDuration, short dccDuration, int prevPosition)
+bool initTrapezoidalProfileData(MotorData& data, short totalDuration, TrapezoidalStates state, int prevPosition, int offset)
 {
 	data.profile.state = state;
 	data.profile.totalDuration = totalDuration;
-	data.profile.accDuration = accDuration;
-	data.profile.dccDuration = dccDuration;
-	data.profile.maxPower = 100; // why not a define? 
+	data.profile.accDuration = ACCELERATION_DURATION;
+	data.profile.dccDuration = DECELERATION_DURATION;
+	data.profile.minPower = MIN_POWER + offset;
+	data.profile.maxPower = 50; // why not a define? 
 	data.profile.previousPosition = prevPosition;
 	data.profile.isConfigured = true;
 	return true;
@@ -105,9 +112,11 @@ void motorDataChecksAndProcedures(MotorData& data)
 {
 	if(abs(data.profile.totalDuration) < data.profile.accDuration + data.profile.dccDuration)
 	{
+
 		float totalWindow = (float)(ACCELERATION_DURATION + DECELERATION_DURATION);
 		data.profile.accDuration = (short)(ACCELERATION_DURATION * (abs(data.profile.totalDuration) / totalWindow));
 		data.profile.dccDuration = (short)(abs(data.profile.totalDuration) - data.profile.accDuration);
+		
 	}
 }
 
@@ -130,6 +139,7 @@ bool runMotorData(MotorData& data, short currentPosition)
 			bool isDone = stayAtSameSpeed(data, currentPosition);
 			if(isDone)
 			{
+
 				data.profile.state = (TrapezoidalStates)Dcc;
 			}
 		}
@@ -140,6 +150,7 @@ bool runMotorData(MotorData& data, short currentPosition)
 			bool isDone = decelerate(data, currentPosition);
 			if(isDone)
 			{
+				data.motorPort.stop();
 				data.stallData.isInitiated = false;
 				return true;
 			}

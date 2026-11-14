@@ -1,6 +1,6 @@
 #include "bot.h"
 #pragma once
-#define MIN_POWER 12
+#define MIN_POWER 10
 enum TriangleState
 {
     AccT,

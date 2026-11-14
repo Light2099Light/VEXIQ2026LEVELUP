@@ -109,6 +109,7 @@ struct TrapData
 	short accDuration;
 	short dccDuration;
 	short totalDuration;
+	short minPower;
 	short maxPower;
 	TrapezoidalStates state;
 	bool isConfigured;
@@ -137,6 +138,7 @@ struct Bot
 	vex::inertial gyro;
 	EndEff claw;
 	Light button;
+	vex::optical optical = vex::optical(PORT1);
 };
 
 vex::timer time1 = vex::timer();
@@ -144,5 +146,6 @@ vex::timer time2 = vex::timer();
 vex::timer time3 = vex::timer();
 
 vex::timer PneuTimer = vex::timer();
+vex::timer CommTimer = vex::timer();
 
 Bot bot;
