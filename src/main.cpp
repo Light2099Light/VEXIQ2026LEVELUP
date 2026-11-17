@@ -308,7 +308,7 @@ void runCommands(Bot bot)
 		{
 			CurveData data;
 
-			memcpy(&data, &command, sizeof(DriveUntilBeanBagData));
+			memcpy(&data, &command, sizeof(CurveData));
 
 			configure(&data);
 
