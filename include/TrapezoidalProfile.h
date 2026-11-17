@@ -1,5 +1,5 @@
 #pragma once
-#define MIN_POWER 10
+#define MIN_POWER 5
 #define ACCELERATION_DURATION 100
 #define DECELERATION_DURATION 500
 

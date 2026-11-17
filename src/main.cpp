@@ -37,6 +37,8 @@ vex::inertial Gyro = vex::inertial();
 
 vex::touchled touchLED(PORT12);
 
+vex::bumper armLimitSwitch(PORT1);
+
 //vex::aivision AiVision(PORT2, aivision::ALL_AIOBJS);
 vex::optical OpticalSensor(PORT11);
 
@@ -56,13 +58,15 @@ void createCommands()
 {
 	bot.index = 0;
 
+			
 			initWaitUntilPressedData((vex::color)green, 50);
 			initSetPneumaticData(true, true);
 			initSetPneumaticData(false, true);
 			initWaitUntilPressedData((vex::color)blue, 50);
-			initMoveAttachMotorData(100, 120*ARM_RATIO);
-			initTurnByGyroData(5);
-			initMoveByDegreeData(4000, -distanceToDegrees(540), -distanceToDegrees(540), Acc, Acc);
+			initMoveByDegreeData(3000, distanceToDegrees(210), distanceToDegrees(210), Acc, Acc);
+			initMoveAttachMotorData(100, 130*ARM_RATIO);
+			//initTurnByGyroData(5);
+			initMoveByDegreeData(4000, -distanceToDegrees(780), -distanceToDegrees(880), Acc, Acc);
 			initSetPneumaticData(false, false);
 			initMoveAttachMotorData(100, 170*ARM_RATIO);
 			initSetPneumaticData(false, false);
@@ -70,43 +74,53 @@ void createCommands()
 			initSetPneumaticData(true, false);
 			initMoveAttachMotorData(-100, 170*ARM_RATIO);
 			initMoveByDegreeData(4000, distanceToDegrees(300), distanceToDegrees(300), Acc, Acc);
-			initMoveAttachMotorData(-100, 130*ARM_RATIO);
+			initMoveAttachMotorData(-100, 135*ARM_RATIO);
 
 
 			initWaitUntilPressedData((vex::color)green, 50);
 			initSetPneumaticData(true, false);
 			initSetPneumaticData(true, true);
 			initWaitUntilPressedData((vex::color)blue, 50);
+			initMoveByDegreeData(3000, -distanceToDegrees(300), -distanceToDegrees(300), Acc, Acc);
 			initTurnByGyroData(-5);
-			initMoveByDegreeData(4000, -distanceToDegrees(550), -distanceToDegrees(550), Acc, Acc);
+			initMoveByDegreeData(4000, -distanceToDegrees(570), -distanceToDegrees(570), Acc, Acc);
 			initSetPneumaticData(true, true);
 			initSetPneumaticData(false, true);
 			initMoveByDegreeData(4000, distanceToDegrees(300), distanceToDegrees(300), Acc, Acc);
 			initSetPneumaticData(true, true);
-			initMoveByDegreeData(4000, -distanceToDegrees(20), -distanceToDegrees(20), Acc, Acc);
+			initMoveByDegreeData(4000, -distanceToDegrees(25), -distanceToDegrees(25), Acc, Acc);
 			initSetPneumaticData(false, true);
 			initMoveByDegreeData(4000, distanceToDegrees(50), distanceToDegrees(50), Acc, Acc);
 			initTurnByGyroData(45);
 			initMoveAttachMotorData(100, 130*ARM_RATIO);
 			initMoveByDegreeData(4000,-distanceToDegrees(420), -distanceToDegrees(420), Acc, Acc);
 			initSetPneumaticData(false, false);
-			initMoveAttachMotorData(100, 170*ARM_RATIO);
-			initSetPneumaticData(true, false);
-			initMoveAttachMotorData(-100, 170*ARM_RATIO);
-			initMoveByDegreeData(4000, distanceToDegrees(300), distanceToDegrees(300), Acc, Acc);
-			initMoveAttachMotorData(-100, 130*ARM_RATIO);
+			initMoveAttachMotorData(100, 175*ARM_RATIO);
+			initSetPneumaticData(false, true);
 			initSetPneumaticData(true, true);
-			initTurnByGyroData(-10);
+			initSetPneumaticData(true, false);
+			initMoveAttachMotorData(-100, 175*ARM_RATIO);
+			initMoveByDegreeData(4000, distanceToDegrees(300), distanceToDegrees(300), Acc, Acc);
+			initMoveAttachMotorData(-100, 135*ARM_RATIO);
+			initSetPneumaticData(true, true);
+			initTurnByGyroData(-12);
 			initMoveByDegreeData(4000, -distanceToDegrees(150), -distanceToDegrees(150), Acc, Acc);
 			initMoveByDegreeData(4000, -distanceToDegrees(150), -distanceToDegrees(150), Acc, Acc);
 			initSetPneumaticData(false, true);
 			initMoveByDegreeData(4000, distanceToDegrees(300), distanceToDegrees(300), Acc, Acc);
+			initSetPneumaticData(true, true);
+			initMoveByDegreeData(4000, -distanceToDegrees(20), -distanceToDegrees(20), Acc, Acc);
+			initSetPneumaticData(false, true);
+			initMoveByDegreeData(4000, distanceToDegrees(20), distanceToDegrees(20), Acc, Acc);
 			initTurnByGyroData(8);
 			initMoveAttachMotorData(100, 130*ARM_RATIO);
 			initSetPneumaticData(false, false);
 			initMoveByDegreeData(4000, -distanceToDegrees(300), -distanceToDegrees(300), Acc, Acc);
 			initMoveAttachMotorData(100, 170*ARM_RATIO);
+			initSetPneumaticData(false, true);
+			initSetPneumaticData(true, true);
 			initSetPneumaticData(true, false);
+			initMoveAttachMotorData(-100, 170*ARM_RATIO);
 
 			// initWaitUntilPressedData((vex::color)green, 50);
 			// initSetPneumaticData(true, false);
@@ -335,12 +349,22 @@ int main()
 	bot.right.profile.previousPosition = 0;
 	bot.center.profile.previousPosition = 0;
 
+	
+
 
 	bot.gyro = Gyro;
 
 	bot.button.initLed(touchLED);
 
-	
+	bot.claw.clawPneumatic.pumpOff();
+	bot.button.Led.setBrightness(100);
+	bot.button.Led.setColor(color::red);
+
+	while(!bot.button.Led.pressing())
+	{
+		vex::task::sleep(20);
+	}
+	bot.button.Led.setColor(color::blue);
 
 	Brain.playSound(soundType::alarm2);
 
@@ -362,11 +386,21 @@ int main()
 		printf("Gyro is calibrating...\n");
 		vex::task::sleep(100);
 	}
+	vex::task::sleep(500);
+	
+	bot.gyro.resetHeading();
+	bot.gyro.resetRotation();
 
 	bot.claw.clawPneumatic.pumpOn();
 
-	bot.gyro.resetHeading();
-	bot.gyro.resetRotation();
+	bot.claw.clawPneumatic.extend(cylinder1);
+	CommTimer.clear();
+
+	while(!armLimitSwitch.pressing())
+	{
+		bot.center.motorPort.spin(-20);
+	}
+	bot.center.motorPort.stop();
 	
 	
 	bot.isCheckForRecovery = false;

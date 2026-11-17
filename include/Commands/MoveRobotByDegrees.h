@@ -36,8 +36,8 @@ void configure(RobotDrivetrainData* data)
 
 	data->isConfigured = true;
 
-	initTrapezoidalProfileData((MotorData&)bot.left, data->leftDuration, data->leftState, bot.left.motorPort.position(), 3);
-	initTrapezoidalProfileData((MotorData&)bot.right, data->rightDuration, data->rightState, bot.right.motorPort.position(), 5);
+	initTrapezoidalProfileData((MotorData&)bot.left, data->leftDuration, data->leftState, bot.left.motorPort.position(), 0);
+	initTrapezoidalProfileData((MotorData&)bot.right, data->rightDuration, data->rightState, bot.right.motorPort.position(), 0);
 	motorDataChecksAndProcedures((MotorData&)bot.left);
 	motorDataChecksAndProcedures((MotorData&)bot.right);
 	resetCurrentPosition((MotorData&)bot.left, bot.left.motorPort.position());

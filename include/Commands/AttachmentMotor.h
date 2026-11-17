@@ -38,11 +38,19 @@ void configure(MoveAttachMotorData* data)
 
 bool hasRan(MoveAttachMotorData* data)
 {
-	if((unsigned)abs(bot.center.motorPort.position()) >= data->duration)
+	
+	if(data->power < 0 && armLimitSwitch.pressing())
 	{
 		return true;
 	}
-	bot.center.motorPort.spin(data->power);
+	else if((unsigned)abs(bot.center.motorPort.position()) >= data->duration)
+	{
+		return true;
+	}
+	else
+	{
+		bot.center.motorPort.spin(data->power);
+	}
 
 
 	BaseCommand* command = (BaseCommand*)&bot.commands[bot.index];
