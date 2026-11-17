@@ -17,6 +17,7 @@ enum CommandType
 	SetPneumatic = 0x06,
 	WaitUntilPressed = 0x07,
 	DriveUntilBeanBag = 0x08,
+	DriveInCurve = 0x09,
 };
 
 struct BaseCommand

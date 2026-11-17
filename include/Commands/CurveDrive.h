@@ -8,18 +8,19 @@ struct CurveData
 	CommandType commandType;
 	bool isConfigured;
     short duration;
-    int8_t leftMax;
-    int8_t rightMax;
+    short angle;
 };
 
 
-void initCurveData(short duration, int8_t leftMax, int8_t rightMax, bool isRecovery = false)
+void initCurveData(short duration, short angle,  bool isRecovery = false)
 {
 	VERIFY(sizeof(CurveData) <= sizeof(BaseCommand));
 
 	CurveData data;
-	data.commandType = (CommandType)TurnByGyro;
+	data.commandType = (CommandType)DriveInCurve;
 	data.isConfigured = false;
+
+    data.duration = duration;
 
 	data.angle = angle;
 
@@ -29,51 +30,37 @@ void initCurveData(short duration, int8_t leftMax, int8_t rightMax, bool isRecov
 
 }
 
-void configure(TurnByGyroData* data)
+void configure(CurveData* data)
 {
 	if(data->isConfigured) return;
 
 	data->isConfigured = true;
 
 	BaseCommand* command = (BaseCommand*)&bot.commands[bot.index];
-	memcpy(command, data, sizeof(TurnByGyroData));
+	memcpy(command, data, sizeof(CurveData));
 
 	bot.gyro.setRotation(0, rotationUnits::deg);
 }
 
-bool hasRan(TurnByGyroData* data)
+bool hasRan(CurveData* data)
 {
-    int gyroRotation = bot.gyro.rotation();
-    printf("Gyro rotation: %d, angle: %d\n", gyroRotation, data->angle);
-    
-    int direction = sgn(data->angle);
+    int error = angle - bot.gyro.rotation();
 
-    if(abs(gyroRotation) < abs(data->angle))
+    bot.left.motorPort.setVelocity(50 - error, pct);
+    bot.right.motorPort.setVelocity(50 + error, pct);
+
+    if(abs(bot.gyro.rotation()) >= abs(data->angle) && (bot.left.motorPort.position()+bot.right.motorPort.position())>>1 >= data->duration)
     {
-        int power = direction * abs(MIN_POWER);
-        bot.left.motorPort.spin(power);
-        bot.right.motorPort.spin(-power);
-    }
-    else
-    {
-        bot.left.motorPort.stop();
-        bot.right.motorPort.stop();
         return true;
     }
 
-
-    
-        
-
-    
-
     
 	BaseCommand* command = (BaseCommand*)&bot.commands[bot.index];
-	memcpy(command, data, sizeof(TurnByGyroData));
+	memcpy(command, data, sizeof(CurveData));
 	return false;
 }
 
-void cleanup(TurnByGyroData* data)
+void cleanup(CurveData* data)
 {
 	bot.left.motorPort.stop();
     bot.right.motorPort.stop();

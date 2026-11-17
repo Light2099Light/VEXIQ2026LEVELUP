@@ -304,6 +304,21 @@ void runCommands(Bot bot)
 			finalize();
 		}
 
+		case DriveInCurve:
+		{
+			CurveData data;
+
+			memcpy(&data, &command, sizeof(DriveUntilBeanBagData));
+
+			configure(&data);
+
+			if(!hasRan(&data)) return;
+
+			cleanup(&data);
+
+			finalize();
+		}
+
 		case StopRecovery:
 		{
 			bot.isRecovery = false;
