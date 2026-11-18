@@ -3,6 +3,8 @@
 #define MIN_POWER 10
 
 
+vex::touchled versionLed = vex::touchled(PORT7);
+
 struct CurveData
 {
 	CommandType commandType;
@@ -39,17 +41,20 @@ void configure(CurveData* data)
 	BaseCommand* command = (BaseCommand*)&bot.commands[bot.index];
 	memcpy(command, data, sizeof(CurveData));
 
-	bot.gyro.setRotation(0, rotationUnits::deg);
+	bot.gyro.setRotation(0, vex::rotationUnits::deg);
 }
 
 bool hasRan(CurveData* data)
 {
-    int error = angle - bot.gyro.rotation();
+	int current = bot.gyro.rotation(degrees);
+    int error = data->angle - current;
 
-    bot.left.motorPort.setVelocity(50 - error, pct);
-    bot.right.motorPort.setVelocity(50 + error, pct);
+    bot.left.motorPort.spin((20*sgn(data->duration) + error*(0.1)));
+    bot.right.motorPort.spin((20*sgn(data->duration) - error*(0.1)));
 
-    if(abs(bot.gyro.rotation()) >= abs(data->angle) && (bot.left.motorPort.position()+bot.right.motorPort.position())>>1 >= data->duration)
+	printf("Angle: %d, Error: %d, Current: %d\n", data->angle, error, bot.gyro.rotation());
+
+    if(abs(bot.gyro.rotation()) >= abs(data->angle) && (abs(bot.left.motorPort.position()+bot.right.motorPort.position())/2 >= abs(data->duration)))
     {
         return true;
     }

@@ -65,16 +65,20 @@ void createCommands()
 			initWaitUntilPressedData((vex::color)blue, 50);
 			initMoveByDegreeData(3000, distanceToDegrees(210), distanceToDegrees(210), Acc, Acc);
 			initMoveAttachMotorData(100, 130*ARM_RATIO);
-			//initTurnByGyroData(5);
-			initMoveByDegreeData(4000, -distanceToDegrees(780), -distanceToDegrees(880), Acc, Acc);
+			initCurveData(-distanceToDegrees(500), 15);
+			initMoveByDegreeData(3000, -distanceToDegrees(210), -distanceToDegrees(210), Acc, Acc);
+			//initMoveByDegreeData(4000, -distanceToDegrees(780), -distanceToDegrees(880), Acc, Acc);
+			initMoveAttachMotorData(100, 85*ARM_RATIO);
 			initSetPneumaticData(false, false);
-			initMoveAttachMotorData(100, 170*ARM_RATIO);
+			initMoveAttachMotorData(50, 85*ARM_RATIO);
 			initSetPneumaticData(false, false);
 			initSetPneumaticData(true, false);
 			initSetPneumaticData(true, false);
-			initMoveAttachMotorData(-100, 170*ARM_RATIO);
+			initMoveAttachMotorData(-50, 170*ARM_RATIO);
 			initMoveByDegreeData(4000, distanceToDegrees(300), distanceToDegrees(300), Acc, Acc);
-			initMoveAttachMotorData(-100, 135*ARM_RATIO);
+			initMoveAttachMotorData(-50, 135*ARM_RATIO);
+
+			initStopData();
 
 
 			initWaitUntilPressedData((vex::color)green, 50);
@@ -306,6 +310,8 @@ void runCommands(Bot bot)
 
 		case DriveInCurve:
 		{
+			printf("curve");
+			
 			CurveData data;
 
 			memcpy(&data, &command, sizeof(CurveData));
@@ -327,9 +333,10 @@ void runCommands(Bot bot)
 
 		case Stop:
 		{
-			bot.left.motorPort.stop();
-			bot.right.motorPort.stop();
-			bot.center.motorPort.stop();
+			while(true)
+			{
+				wait(200, msec);
+			}
 		}
 		break;
 	}
@@ -350,6 +357,9 @@ void RecoveryChecker(bool& isCheckForRecovery, int startindex, int endindex)
 
 int main()
 {
+
+	versionLed.setColor(blue);
+	versionLed.setBrightness(100);
 	
 	printf("\033[2J");
 	printf("\033[2J");

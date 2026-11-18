@@ -49,8 +49,11 @@ bool hasRan(MoveAttachMotorData* data)
 	}
 	else
 	{
-		bot.center.motorPort.spin(data->power);
+
+		bot.center.motorPort.spin(((data->power)*((data->duration-bot.center.motorPort.position())/data->duration))+(10*sgn(data->power)));
 	}
+
+
 
 
 	BaseCommand* command = (BaseCommand*)&bot.commands[bot.index];

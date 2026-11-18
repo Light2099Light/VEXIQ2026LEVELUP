@@ -1,6 +1,6 @@
 #pragma once
 #define MIN_POWER 5
-#define ACCELERATION_DURATION 100
+#define ACCELERATION_DURATION 200
 #define DECELERATION_DURATION 500
 
 #include "Bot.h"
