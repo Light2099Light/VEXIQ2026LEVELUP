@@ -1,5 +1,4 @@
 #include "MyCommandHeaders.h"
-#include "Utility.h"
 #pragma once
 
 
@@ -213,10 +212,9 @@ bool hasRan(ParallelData* realdata)
     return false;
 }
 
-void cleanup(SetPneumaticData* data)
+void cleanup(ParallelData* data)
 {
+    bot.index += (data->range+1);
+
     
-	bot.left.motorPort.stop();
-    bot.right.motorPort.stop();
-    bot.center.motorPort.stop();
 }

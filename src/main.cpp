@@ -308,6 +308,21 @@ void runCommands(Bot bot)
 			finalize();
 		}
 
+		case DriveUntilBeanBag:
+		{
+			DriveUntilBeanBagData data;
+
+			memcpy(&data, &command, sizeof(DriveUntilBeanBagData));
+
+			configure(&data);
+
+			if(!hasRan(&data)) return;
+
+			cleanup(&data);
+
+			finalize();
+		}
+
 		case DriveInCurve:
 		{
 			printf("curve");
