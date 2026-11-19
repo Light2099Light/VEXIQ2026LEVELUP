@@ -146,6 +146,7 @@ vex::timer time2 = vex::timer();
 vex::timer time3 = vex::timer();
 
 vex::timer PneuTimer = vex::timer();
-vex::timer CommTimer = vex::timer();
+vex::timer DriveTimer = vex::timer();
+vex::timer ArmTimer = vex::timer();
 
 Bot bot;

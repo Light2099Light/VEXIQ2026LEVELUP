@@ -18,6 +18,7 @@ enum CommandType
 	WaitUntilPressed = 0x07,
 	DriveUntilBeanBag = 0x08,
 	DriveInCurve = 0x09,
+	ParallelRun = 0x10,
 };
 
 struct BaseCommand

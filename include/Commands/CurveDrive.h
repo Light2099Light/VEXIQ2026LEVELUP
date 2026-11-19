@@ -49,10 +49,10 @@ bool hasRan(CurveData* data)
 	int current = bot.gyro.rotation(degrees);
     int error = data->angle - current;
 
-    bot.left.motorPort.spin((20*sgn(data->duration) + error*(0.1)));
-    bot.right.motorPort.spin((20*sgn(data->duration) - error*(0.1)));
+    bot.left.motorPort.spin((20*sgn(data->duration) + error*(0.12)));
+    bot.right.motorPort.spin((20*sgn(data->duration) - error*(0.12)));
 
-	printf("Angle: %d, Error: %d, Current: %d\n", data->angle, error, bot.gyro.rotation());
+	
 
     if(abs(bot.gyro.rotation()) >= abs(data->angle) && (abs(bot.left.motorPort.position()+bot.right.motorPort.position())/2 >= abs(data->duration)))
     {

@@ -6,22 +6,23 @@ struct ParallelData
 {
 	CommandType commandType;
 	bool isConfigured;
-    int range;
+    uint8_t commCount;
     uint8_t count;
+    uint8_t currIndex;
 
     bool finishedCommands[];
 };
 
 
-void initParallelCommand(int range)
+void initParallelCommand(int commandcount)
 {
 	VERIFY(sizeof(SetPneumaticData) <= sizeof(BaseCommand));
 
 	ParallelData data;
-	data.commandType = (CommandType)SetPneumatic;
+	data.commandType = (CommandType)ParallelRun;
 	data.isConfigured = false;
-    data.range = range;
-    data.finishedCommands[range];
+    data.commCount = commandcount;
+    data.finishedCommands[data.commCount];
 
     BaseCommand* command = (BaseCommand*)&bot.commands[bot.index];
 	memcpy(command, &data, sizeof(ParallelData));
@@ -38,7 +39,9 @@ void configure(ParallelData* data)
 
     data->count = 0;
 
-    for(int i = 0; i < data->range; i++)
+    data->currIndex = 1;
+
+    for(int i = 0; i < data->commCount; i++)
     {
         data->finishedCommands[i] = false;
     }
@@ -50,33 +53,48 @@ void configure(ParallelData* data)
 
 bool hasRan(ParallelData* realdata)
 {
-    if(realdata->count >= realdata->range) return true;
-
-    for(int i = 1; i < realdata->range; i++)
+    if(realdata->count >= realdata->commCount) return true;
+    
+    printf("index: %d\n", realdata->currIndex);
+    if(realdata->currIndex > realdata->commCount)
     {
-        if(realdata->finishedCommands[i-1])
-        {
+        printf("resetIndex");
+        realdata->currIndex = 1;
+    }
 
+
+        if(realdata->finishedCommands[realdata->currIndex-1])
+        {
+            printf("The %dth command is finished\n", realdata->currIndex);
         }
         else
         {
-            BaseCommand& command = bot.commands[bot.index+i];
-            switch(command.commandType & 0x7F)
+            BaseCommand& command = bot.commands[bot.index+realdata->currIndex];
+            switch(command.commandType)
             {
 
                 case AttachMotor:
                 {
+                    printf("arm");
+
                     MoveAttachMotorData data;
 
                     memcpy(&data, &command, sizeof(MoveAttachMotorData));
 
                     configure(&data);
 
-                    if(!hasRan(&data)) break;
+                     
+                    
+
+                    if(!hasRan(&data))
+                    {
+                        realdata->currIndex++;
+                        return false;
+                    }
 
                     cleanup(&data);
 
-                    realdata->finishedCommands[i-1] = true;
+                    realdata->finishedCommands[realdata->currIndex-1] = true;
                     realdata->count++;
                 }
                 break;
@@ -89,11 +107,18 @@ bool hasRan(ParallelData* realdata)
 
                     configure(&data);
 
-                    if(!hasRan(&data)) break;
+                     
+                 
+
+                    if(!hasRan(&data))
+                    {
+                        realdata->currIndex++;
+                        return false;
+                    }
 
                     cleanup(&data);
 
-                    realdata->finishedCommands[i-1] = true;
+                    realdata->finishedCommands[realdata->currIndex-1] = true;
                     realdata->count++;
                 }
                 break;
@@ -101,17 +126,27 @@ bool hasRan(ParallelData* realdata)
                 case MoveByDegrees:
                 {
 
+                    printf("drive");
+
                     RobotDrivetrainData data;
 
                     memcpy(&data, &command, sizeof(RobotDrivetrainData));
 
                     configure(&data);
 
-                    if(!hasRan(&data)) break;
+                     
+                  
 
+                    if(!hasRan(&data))
+                    {
+                        printf("reached");
+                        realdata->currIndex++;
+                        return false;
+                    }
+                    printf("hey you fucked up");
                     cleanup(&data);
 
-                    realdata->finishedCommands[i-1] = true;
+                    realdata->finishedCommands[realdata->currIndex-1] = true;
                     realdata->count++;
 
                 }
@@ -125,11 +160,17 @@ bool hasRan(ParallelData* realdata)
 
                     configure(&data);
 
-                    if(!hasRan(&data)) break;
+               
+
+                    if(!hasRan(&data))
+                    {
+                        realdata->currIndex++;
+                        return false;
+                    }
 
                     cleanup(&data);
 
-                    realdata->finishedCommands[i-1] = true;
+                    realdata->finishedCommands[realdata->currIndex-1] = true;
                     realdata->count++;
 
                 }
@@ -143,11 +184,18 @@ bool hasRan(ParallelData* realdata)
 
                     configure(&data);
 
-                    if(!hasRan(&data)) break;
+                     
+                 
+
+                    if(!hasRan(&data))
+                    {
+                        realdata->currIndex++;
+                        return false;
+                    }
 
                     cleanup(&data);
 
-                    realdata->finishedCommands[i-1] = true;
+                    realdata->finishedCommands[realdata->currIndex-1] = true;
                     realdata->count++;
 
                 }
@@ -161,11 +209,18 @@ bool hasRan(ParallelData* realdata)
 
                     configure(&data);
 
-                    if(!hasRan(&data)) break;
+                     
+                 
+
+                    if(!hasRan(&data))
+                    {
+                        realdata->currIndex++;
+                        return false;
+                    }
 
                     cleanup(&data);
 
-                    realdata->finishedCommands[i-1] = true;
+                    realdata->finishedCommands[realdata->currIndex-1] = true;
                     realdata->count++;
 
                 }
@@ -180,11 +235,17 @@ bool hasRan(ParallelData* realdata)
 
                     configure(&data);
 
-                    if(!hasRan(&data)) break;
+                     
+                   
+                    if(!hasRan(&data))
+                    {
+                        realdata->currIndex++;
+                        return false;
+                    }
 
                     cleanup(&data);
 
-                    realdata->finishedCommands[i-1] = true;
+                    realdata->finishedCommands[realdata->currIndex-1] = true;
                     realdata->count++;
 
                 }
@@ -206,7 +267,7 @@ bool hasRan(ParallelData* realdata)
             }
         }
         
-    }
+    
 	BaseCommand* command = (BaseCommand*)&bot.commands[bot.index];
 	memcpy(command, realdata, sizeof(ParallelData));
     return false;
@@ -214,7 +275,7 @@ bool hasRan(ParallelData* realdata)
 
 void cleanup(ParallelData* data)
 {
-    bot.index += (data->range+1);
+    bot.index += (data->commCount+1);
 
     
 }

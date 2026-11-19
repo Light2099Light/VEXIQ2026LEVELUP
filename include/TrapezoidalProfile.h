@@ -28,7 +28,6 @@ bool accelerate(MotorData& data, int sensorPosition)
 	
 	if(abs(currentPosition) >= abs(data.profile.accDuration))
 	{
-		printf("Accelerate done\n currPos:%d\n", currentPosition);
 		return true;
 	}
 
@@ -51,7 +50,6 @@ bool stayAtSameSpeed(MotorData& data, int sensorPosition)
 	int trapezoidalB1 = abs(data.profile.totalDuration)-abs(data.profile.dccDuration);
 	if(abs(currentPosition) >= abs(trapezoidalB1))
 	{
-		printf("Coast done\n currPos:%d\n", currentPosition);
 		return true;
 	}
 
@@ -65,7 +63,6 @@ bool decelerate(MotorData& data, int sensorPosition)
 
 	if(abs(currentPosition) >= abs(data.profile.totalDuration))
 	{
-		printf("Decelerate done\n currPos:%d\n", currentPosition);
 		data.motorPort.stop();
 		return true;
 	}
@@ -122,6 +119,7 @@ void motorDataChecksAndProcedures(MotorData& data)
 
 bool runMotorData(MotorData& data, short currentPosition)
 {
+	printf("drive running");
 	switch(data.profile.state)
 	{
 		case Acc:

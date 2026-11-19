@@ -39,6 +39,8 @@ vex::touchled touchLED(PORT12);
 
 vex::bumper armLimitSwitch(PORT1);
 
+vex::bumper funnelDetector(PORT11);
+
 //vex::aivision AiVision(PORT2, aivision::ALL_AIOBJS);
 vex::optical OpticalSensor(PORT11);
 
@@ -63,20 +65,23 @@ void createCommands()
 			initSetPneumaticData(true, true);
 			initSetPneumaticData(false, true);
 			initWaitUntilPressedData((vex::color)blue, 50);
+			//initParallelCommand(2);
 			initMoveByDegreeData(3000, distanceToDegrees(210), distanceToDegrees(210), Acc, Acc);
-			initMoveAttachMotorData(100, 130*ARM_RATIO);
+			initMoveAttachMotorData(3000, 100, 130*ARM_RATIO);
+			
+			//initParallelCommand(2);
 			initCurveData(-distanceToDegrees(500), 15);
 			initMoveByDegreeData(3000, -distanceToDegrees(210), -distanceToDegrees(210), Acc, Acc);
 			//initMoveByDegreeData(4000, -distanceToDegrees(780), -distanceToDegrees(880), Acc, Acc);
-			initMoveAttachMotorData(100, 85*ARM_RATIO);
+			initMoveAttachMotorData(4000, 100, 85*ARM_RATIO);
 			initSetPneumaticData(false, false);
-			initMoveAttachMotorData(50, 85*ARM_RATIO);
+			initMoveAttachMotorData(4000, 50, 80*ARM_RATIO);
 			initSetPneumaticData(false, false);
 			initSetPneumaticData(true, false);
 			initSetPneumaticData(true, false);
-			initMoveAttachMotorData(-50, 170*ARM_RATIO);
-			initMoveByDegreeData(4000, distanceToDegrees(300), distanceToDegrees(300), Acc, Acc);
-			initMoveAttachMotorData(-50, 135*ARM_RATIO);
+			initMoveAttachMotorData(4000, -50, 170*ARM_RATIO);
+			initMoveByDegreeData(4000, distanceToDegrees(500), distanceToDegrees(500), Acc, Acc);
+			initMoveAttachMotorData(4000, -50, 135*ARM_RATIO);
 
 			initStopData();
 
@@ -96,16 +101,16 @@ void createCommands()
 			initSetPneumaticData(false, true);
 			initMoveByDegreeData(4000, distanceToDegrees(50), distanceToDegrees(50), Acc, Acc);
 			initTurnByGyroData(45);
-			initMoveAttachMotorData(100, 130*ARM_RATIO);
+			initMoveAttachMotorData(4000, 100, 130*ARM_RATIO);
 			initMoveByDegreeData(4000,-distanceToDegrees(420), -distanceToDegrees(420), Acc, Acc);
 			initSetPneumaticData(false, false);
-			initMoveAttachMotorData(100, 175*ARM_RATIO);
+			initMoveAttachMotorData(4000, 100, 175*ARM_RATIO);
 			initSetPneumaticData(false, true);
 			initSetPneumaticData(true, true);
 			initSetPneumaticData(true, false);
-			initMoveAttachMotorData(-100, 175*ARM_RATIO);
+			initMoveAttachMotorData(4000, -100, 175*ARM_RATIO);
 			initMoveByDegreeData(4000, distanceToDegrees(300), distanceToDegrees(300), Acc, Acc);
-			initMoveAttachMotorData(-100, 135*ARM_RATIO);
+			initMoveAttachMotorData(4000, -100, 135*ARM_RATIO);
 			initSetPneumaticData(true, true);
 			initTurnByGyroData(-12);
 			initMoveByDegreeData(4000, -distanceToDegrees(150), -distanceToDegrees(150), Acc, Acc);
@@ -117,14 +122,14 @@ void createCommands()
 			initSetPneumaticData(false, true);
 			initMoveByDegreeData(4000, distanceToDegrees(20), distanceToDegrees(20), Acc, Acc);
 			initTurnByGyroData(8);
-			initMoveAttachMotorData(100, 130*ARM_RATIO);
+			initMoveAttachMotorData(4000, 100, 130*ARM_RATIO);
 			initSetPneumaticData(false, false);
 			initMoveByDegreeData(4000, -distanceToDegrees(300), -distanceToDegrees(300), Acc, Acc);
-			initMoveAttachMotorData(100, 170*ARM_RATIO);
+			initMoveAttachMotorData(4000, 100, 170*ARM_RATIO);
 			initSetPneumaticData(false, true);
 			initSetPneumaticData(true, true);
 			initSetPneumaticData(true, false);
-			initMoveAttachMotorData(-100, 170*ARM_RATIO);
+			initMoveAttachMotorData(4000, -100, 170*ARM_RATIO);
 
 			// initWaitUntilPressedData((vex::color)green, 50);
 			// initSetPneumaticData(true, false);
@@ -158,6 +163,7 @@ void runCommands(Bot bot)
 	{
 		case AttachMotorRec:
 		{
+			printf("attach");
 			MoveAttachMotorData data;
 			
 			memcpy(&data, &command, sizeof(MoveAttachMotorData));
@@ -236,6 +242,8 @@ void runCommands(Bot bot)
 		case MoveByDegrees:
 		{
 
+			printf("drive");
+
 			bool isLeftStalled = initiateStall((MotorData&)bot.left);
 			bool isRightStalled = initiateStall((MotorData&)bot.right);
 			bool isCenterStalled = initiateStall((MotorData&)bot.center);
@@ -308,11 +316,11 @@ void runCommands(Bot bot)
 			finalize();
 		}
 
-		case DriveUntilBeanBag:
+		case ParallelRun:
 		{
-			DriveUntilBeanBagData data;
+			ParallelData data;
 
-			memcpy(&data, &command, sizeof(DriveUntilBeanBagData));
+			memcpy(&data, &command, sizeof(ParallelData));
 
 			configure(&data);
 
@@ -320,7 +328,6 @@ void runCommands(Bot bot)
 
 			cleanup(&data);
 
-			finalize();
 		}
 
 		case DriveInCurve:
@@ -434,7 +441,8 @@ int main()
 	bot.claw.clawPneumatic.pumpOn();
 
 	bot.claw.clawPneumatic.extend(cylinder1);
-	CommTimer.clear();
+	DriveTimer.clear();
+	ArmTimer.clear();
 
 	while(!armLimitSwitch.pressing())
 	{

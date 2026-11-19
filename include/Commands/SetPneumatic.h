@@ -54,7 +54,7 @@ bool hasRan(SetPneumaticData* data)
 
     if(data->isClawExtended)
     {
-        printf("extended Claw");
+        printf("extended Claw\n");
         bot.claw.clawPneumatic.extend(Claw);
     }
     else

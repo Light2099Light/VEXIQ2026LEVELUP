@@ -3,11 +3,12 @@ struct MoveAttachMotorData
 {
 	CommandType commandType;
 	bool isConfigured;
-	int power;
 	unsigned short duration;
+	int8_t power;
+	int time;
 };
 
-void initMoveAttachMotorData(int power, unsigned short duration, bool isRecovery = false)
+void initMoveAttachMotorData(int time, int8_t power, unsigned short duration, bool isRecovery = false)
 {
 	VERIFY(sizeof(MoveAttachMotorData) <= sizeof(BaseCommand));
 
@@ -17,6 +18,8 @@ void initMoveAttachMotorData(int power, unsigned short duration, bool isRecovery
 
 	data.power = power;
 	data.duration = duration;
+
+	data.time = time;
 
 	memcpy(&bot.commands[bot.index], &data, sizeof(MoveAttachMotorData));
 
@@ -29,6 +32,8 @@ void configure(MoveAttachMotorData* data)
 	if(data->isConfigured) return;
 
 	data->isConfigured = true;
+
+	ArmTimer.clear();
 
 	BaseCommand* command = (BaseCommand*)&bot.commands[bot.index];
 	memcpy(command, data, sizeof(MoveAttachMotorData));
@@ -44,6 +49,10 @@ bool hasRan(MoveAttachMotorData* data)
 		return true;
 	}
 	else if((unsigned)abs(bot.center.motorPort.position()) >= data->duration)
+	{
+		return true;
+	}
+	else if(ArmTimer.time() >= data->time)
 	{
 		return true;
 	}

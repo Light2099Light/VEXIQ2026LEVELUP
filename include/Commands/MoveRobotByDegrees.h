@@ -42,7 +42,7 @@ void configure(RobotDrivetrainData* data)
 	motorDataChecksAndProcedures((MotorData&)bot.right);
 	resetCurrentPosition((MotorData&)bot.left, bot.left.motorPort.position());
 	resetCurrentPosition((MotorData&)bot.right, bot.right.motorPort.position());
-	CommTimer.clear();
+	DriveTimer.clear();
 
 	BaseCommand* command = (BaseCommand*)&bot.commands[bot.index];
 	memcpy(command, data, sizeof(RobotDrivetrainData));
@@ -50,7 +50,7 @@ void configure(RobotDrivetrainData* data)
 
 bool hasRan(RobotDrivetrainData* data)
 {
-	if(CommTimer.time() >= data->time)
+	if(DriveTimer.time() >= data->time );
 	{
 		return true;
 	}
