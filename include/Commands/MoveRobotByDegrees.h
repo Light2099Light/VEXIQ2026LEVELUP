@@ -30,7 +30,7 @@ void initMoveByDegreeData(unsigned short time, short leftDuration, short rightDu
 	bot.index++;
 }
 
-void configure(RobotDrivetrainData* data)
+void configure(RobotDrivetrainData* data, int givenIndex)
 {
 	if(data->isConfigured) return;
 
@@ -44,7 +44,7 @@ void configure(RobotDrivetrainData* data)
 	resetCurrentPosition((MotorData&)bot.right, bot.right.motorPort.position());
 	DriveTimer.clear();
 
-	BaseCommand* command = (BaseCommand*)&bot.commands[bot.index];
+	BaseCommand* command = (BaseCommand*)&bot.commands[givenIndex];// This causes a lot of problems if bot.index is in this section.
 	memcpy(command, data, sizeof(RobotDrivetrainData));
 }
 

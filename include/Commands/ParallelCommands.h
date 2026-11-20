@@ -80,7 +80,7 @@ bool hasRan(ParallelData* realdata)
 
                     memcpy(&data, &pcommand, sizeof(MoveAttachMotorData));
 
-                    configure(&data);
+                    configure(&data, bot.index+realdata->currIndex);
 
                      
                     
@@ -109,7 +109,7 @@ bool hasRan(ParallelData* realdata)
 
                     memcpy(&data, &pcommand, sizeof(RobotDrivetrainData));
 
-                    configure(&data);
+                    configure(&data, bot.index+realdata->currIndex);
 
                      
                   

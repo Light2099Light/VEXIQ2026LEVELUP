@@ -1,4 +1,5 @@
 #pragma once
+#include "Bot.h"
 struct MoveAttachMotorData
 {
 	CommandType commandType;
@@ -27,7 +28,7 @@ void initMoveAttachMotorData(int time, int8_t power, unsigned short duration, bo
 
 }
 
-void configure(MoveAttachMotorData* data)
+void configure(MoveAttachMotorData* data, int givenIndex)
 {
 	if(data->isConfigured) return;
 

@@ -209,7 +209,7 @@ void runCommands(Bot bot)
 
 			memcpy(&data, &command, sizeof(MoveAttachMotorData));
 
-			configure(&data);
+			configure(&data, bot.index);
 
 			if(!hasRan(&data)) return;
 
@@ -259,7 +259,7 @@ void runCommands(Bot bot)
 
 			memcpy(&data, &command, sizeof(RobotDrivetrainData));
 
-			configure(&data);
+			configure(&data, bot.index);
 
 			if(!hasRan(&data)) return;
 
