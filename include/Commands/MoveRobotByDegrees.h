@@ -50,7 +50,7 @@ void configure(RobotDrivetrainData* data)
 
 bool hasRan(RobotDrivetrainData* data)
 {
-	if(DriveTimer.time() >= data->time || (funnelDetector.pressing()&&(data->leftDuration > 0)));
+	if(DriveTimer.time() >= data->time)
 	{
 		return true;
 	}

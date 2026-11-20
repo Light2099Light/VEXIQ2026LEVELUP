@@ -119,7 +119,6 @@ void motorDataChecksAndProcedures(MotorData& data)
 
 bool runMotorData(MotorData& data, short currentPosition)
 {
-	printf("drive running");
 	switch(data.profile.state)
 	{
 		case Acc:

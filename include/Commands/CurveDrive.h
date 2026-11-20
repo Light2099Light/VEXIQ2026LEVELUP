@@ -49,8 +49,8 @@ bool hasRan(CurveData* data)
 	int current = bot.gyro.rotation(degrees);
     int error = data->angle - current;
 
-    bot.left.motorPort.spin((20*sgn(data->duration) + error*(0.12)));
-    bot.right.motorPort.spin((20*sgn(data->duration) - error*(0.12)));
+    bot.left.motorPort.spin((30*sgn(data->duration) + error*(0.15)));
+    bot.right.motorPort.spin((30*sgn(data->duration) - error*(0.15)));
 
 	
 

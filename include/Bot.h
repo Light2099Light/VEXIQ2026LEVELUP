@@ -141,6 +141,9 @@ struct Bot
 	vex::optical optical = vex::optical(PORT1);
 };
 
+
+vex::bumper funnelDetector(PORT11);
+
 vex::timer time1 = vex::timer();
 vex::timer time2 = vex::timer();
 vex::timer time3 = vex::timer();

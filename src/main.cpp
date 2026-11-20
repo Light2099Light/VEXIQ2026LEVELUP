@@ -39,7 +39,6 @@ vex::touchled touchLED(PORT12);
 
 vex::bumper armLimitSwitch(PORT1);
 
-vex::bumper funnelDetector(PORT11);
 
 //vex::aivision AiVision(PORT2, aivision::ALL_AIOBJS);
 vex::optical OpticalSensor(PORT11);
@@ -65,13 +64,14 @@ void createCommands()
 			initSetPneumaticData(true, true);
 			initSetPneumaticData(false, true);
 			initWaitUntilPressedData((vex::color)blue, 50);
-			//initParallelCommand(2);
+			initParallelCommand(2);
 			initMoveByDegreeData(3000, distanceToDegrees(210), distanceToDegrees(210), Acc, Acc);
 			initMoveAttachMotorData(3000, 100, 130*ARM_RATIO);
 			
 			//initParallelCommand(2);
 			initCurveData(-distanceToDegrees(500), 15);
-			initMoveByDegreeData(3000, -distanceToDegrees(210), -distanceToDegrees(210), Acc, Acc);
+			initMoveUntilPressedData(-50);
+			//initMoveByDegreeData(3000, -distanceToDegrees(210), -distanceToDegrees(210), Acc, Acc);
 			//initMoveByDegreeData(4000, -distanceToDegrees(780), -distanceToDegrees(880), Acc, Acc);
 			initMoveAttachMotorData(4000, 100, 85*ARM_RATIO);
 			initSetPneumaticData(false, false);
@@ -80,7 +80,7 @@ void createCommands()
 			initSetPneumaticData(true, false);
 			initSetPneumaticData(true, false);
 			initMoveAttachMotorData(4000, -50, 170*ARM_RATIO);
-			initMoveByDegreeData(4000, distanceToDegrees(500), distanceToDegrees(500), Acc, Acc);
+			initMoveByDegreeData(4000, distanceToDegrees(750), distanceToDegrees(750), Acc, Acc);
 			initMoveAttachMotorData(4000, -50, 135*ARM_RATIO);
 
 			initStopData();
@@ -242,7 +242,7 @@ void runCommands(Bot bot)
 		case MoveByDegrees:
 		{
 
-			printf("drive");
+			printf("drive normal\n");
 
 			bool isLeftStalled = initiateStall((MotorData&)bot.left);
 			bool isRightStalled = initiateStall((MotorData&)bot.right);
@@ -315,12 +315,13 @@ void runCommands(Bot bot)
 
 			finalize();
 		}
+		break;
 
-		case ParallelRun:
+		case MoveUntilPressed:
 		{
-			ParallelData data;
+			MoveUntilPressedData data;
 
-			memcpy(&data, &command, sizeof(ParallelData));
+			memcpy(&data, &command, sizeof(MoveUntilPressedData));
 
 			configure(&data);
 
@@ -328,7 +329,43 @@ void runCommands(Bot bot)
 
 			cleanup(&data);
 
+			finalize();
 		}
+		break;
+
+		case ParallelRun:
+		{
+			printf("enter parallel\n");
+			ParallelData data;
+			printf("bot.index before parallel:%d\n", bot.index);
+
+			memcpy(&data, &command, sizeof(ParallelData));
+
+			printf("data.curr on load:%d\n", data.currIndex);
+
+			configure(&data);
+
+			printf("data.curr after config:%d\n", data.currIndex);
+			
+			bool isDataFinished = !hasRan(&data);
+
+			printf("data.curr on save:%d\n", data.currIndex);
+
+			memcpy(&bot.commands[bot.index], &data, sizeof(ParallelData));
+
+			printf("bot.index after parallel:%d\n", bot.index);
+
+			if(isDataFinished)
+			{
+				
+				return;
+			} 
+
+
+			cleanup(&data);
+
+		}
+		break;
 
 		case DriveInCurve:
 		{
@@ -346,6 +383,7 @@ void runCommands(Bot bot)
 
 			finalize();
 		}
+		break;
 
 		case StopRecovery:
 		{
@@ -472,6 +510,7 @@ int main()
 
 		RecoveryChecker(bot.isCheckForRecovery, 0, 40);
 		runCommands((Bot&)bot);
+
 
 		
 
